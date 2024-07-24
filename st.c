@@ -1187,7 +1187,12 @@ tmoveto(int x, int y)
 void
 tsetchar(Rune u, const Glyph *attr, int x, int y)
 {
+	// So given 4 shifts and only GS_GRAPHIC0 handled special
+	// Everything else is UTF-8 handling
 	static const char *vt100_0[62] = { /* 0x41 - 0x7e */
+		// technically A - O are not in the origional set
+		// @ and DEL not in set of 62
+		// ESC ( 0 to enter, ESC ( B to exit
 		"↑", "↓", "→", "←", "█", "▚", "☃", /* A - G */
 		0, 0, 0, 0, 0, 0, 0, 0, /* H - O */
 		0, 0, 0, 0, 0, 0, 0, 0, /* P - W */
@@ -2129,6 +2134,7 @@ tdefutf8(char ascii)
 void
 tdeftran(char ascii)
 {
+	// here the charset vt100 thing is done by ESC (
 	static char cs[] = "0B";
 	static int vcs[] = {CS_GRAPHIC0, CS_USA};
 	char *p;
@@ -2300,6 +2306,7 @@ eschandle(uchar ascii)
 	case 'o': /* LS3 -- Locking shift 3 */
 		term.charset = 2 + (ascii - 'n');
 		break;
+		// alternate char sets done here ESC ( ...
 	case '(': /* GZD4 -- set primary charset G0 */
 	case ')': /* G1D4 -- set secondary charset G1 */
 	case '*': /* G2D4 -- set tertiary charset G2 */
