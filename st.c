@@ -67,11 +67,12 @@ enum cursor_state {
 enum charset {
 	CS_GRAPHIC0,
 	CS_GRAPHIC1,
-	CS_UK,
-	CS_USA,
-	CS_MULTI,
-	CS_GER,
-	CS_FIN
+	// Unicode used for all but old styles
+	//CS_UK,
+	CS_USA//,
+	//CS_MULTI,
+	//CS_GER,
+	//CS_FIN
 };
 
 enum escape_state {
@@ -1189,11 +1190,25 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
 {
 	// So given 4 shifts and only GS_GRAPHIC0 handled special
 	// Everything else is UTF-8 handling
-	static const char *vt100_0[62] = { /* 0x41 - 0x7e */
-		// technically A - O are not in the origional set
-		// @ and DEL not in set of 62
+	static const char *vt100_0[63] = { /* 0x40 - 0x7e */
+		// technically @A - O are not in the origional set
+		// DEL not in set of 63
 		// ESC ( 0 to enter, ESC ( B to exit
-		"↑", "↓", "→", "←", "█", "▚", "☃", /* A - G */
+		"@", "↑", "↓", "→", "←", "█", "▚", "☃", /* @A - G */
+		0, 0, 0, 0, 0, 0, 0, 0, /* H - O */
+		// Origional set below
+		0, 0, 0, 0, 0, 0, 0, 0, /* P - W */
+		0, 0, 0, 0, 0, 0, 0, " ", /* X - _ */
+		"◆", "▒", "␉", "␌", "␍", "␊", "°", "±", /* ` - g */
+		"␤", "␋", "┘", "┐", "┌", "└", "┼", "⎺", /* h - o */
+		"⎻", "─", "⎼", "⎽", "├", "┤", "┴", "┬", /* p - w */
+		"│", "≤", "≥", "π", "≠", "£", "·", /* x - ~ */
+	};
+
+	static const char *nerd[63] = { /* 0x40 - 0x7e */
+		// DEL not in set of 63
+		// ESC ( 1 to enter, ESC ( B to exit
+		"@", "↑", "↓", "→", "←", "█", "▚", "☃", /* @A - G */
 		0, 0, 0, 0, 0, 0, 0, 0, /* H - O */
 		0, 0, 0, 0, 0, 0, 0, 0, /* P - W */
 		0, 0, 0, 0, 0, 0, 0, " ", /* X - _ */
@@ -1203,12 +1218,17 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
 		"│", "≤", "≥", "π", "≠", "£", "·", /* x - ~ */
 	};
 
+	// Also do CS_GRAPHICS1
+	static const char **glyphs = nerd;
+	if(term.trantbl[term.charset] == CS_GRAPHIC0)
+		glyphs = vt100_0;
+
 	/*
 	 * The table is proudly stolen from rxvt.
 	 */
-	if (term.trantbl[term.charset] == CS_GRAPHIC0 &&
-	   BETWEEN(u, 0x41, 0x7e) && vt100_0[u - 0x41])
-		utf8decode(vt100_0[u - 0x41], &u, UTF_SIZ);
+	if (term.trantbl[term.charset] != CS_USA &&
+	   BETWEEN(u, 0x40, 0x7e) && glyphs[u - 0x40])
+		utf8decode(glyphs[u - 0x40], &u, UTF_SIZ);
 
 	if (term.line[y][x].mode & ATTR_WIDE) {
 		if (x+1 < term.col) {
@@ -2135,8 +2155,8 @@ void
 tdeftran(char ascii)
 {
 	// here the charset vt100 thing is done by ESC (
-	static char cs[] = "0B";
-	static int vcs[] = {CS_GRAPHIC0, CS_USA};
+	static char cs[] = "0B1";
+	static int vcs[] = {CS_GRAPHIC0, CS_USA, CS_GRAPHIC1};
 	char *p;
 
 	if ((p = strchr(cs, ascii)) == NULL) {
