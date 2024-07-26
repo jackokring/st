@@ -1194,7 +1194,7 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
 		// technically @A - O are not in the origional set
 		// DEL not in set of 63
 		// ESC ( 0 to enter, ESC ( B to exit
-		"@", "↑", "↓", "→", "←", "█", "▚", "☃", /* @A - G */
+		0, "↑", "↓", "→", "←", "█", "▚", "☃", /* @A - G */
 		0, 0, 0, 0, 0, 0, 0, 0, /* H - O */
 		// Origional set below
 		0, 0, 0, 0, 0, 0, 0, 0, /* P - W */
