@@ -2214,7 +2214,7 @@ tcontrolcode(uchar ascii)
 	case '\r':   /* CR */
 		tmoveto(0, term.c.y);
 		return;
-	case '\f':   /* LF */
+	case '\f':   /* FF */
 	case '\v':   /* VT */
 	case '\n':   /* LF */
 		/* go to first col if the mode is set */

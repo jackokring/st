@@ -45,6 +45,7 @@ int allowaltscreen = 1;
 
 /* allow certain non-interactive (insecure) window operations such as:
    setting the clipboard text */
+// dead code removal of base64dec and no paste unknown
 int allowwindowops = 0;
 
 /*
@@ -146,7 +147,8 @@ static unsigned int cursorshape = 2;
 /*
  * Default columns and rows numbers
  */
-
+// line 25 on terminals was local mode feedback
+// it's a 80*25 = 2000 => (48 / 2) rows => 2 bytes line data for 2 kB buffer @ 2048 bytes old skool
 static unsigned int cols = 80;
 static unsigned int rows = 24;
 
