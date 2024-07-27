@@ -2147,8 +2147,10 @@ tdefutf8(char ascii)
 {
 	if (ascii == 'G')
 		term.mode |= MODE_UTF8;
-	else if (ascii == '@')
-		term.mode &= ~MODE_UTF8;
+	// make it always UTF-8 making above line optimize out
+	//else if (ascii == '@')
+	//	term.mode &= ~MODE_UTF8;
+	else fprintf(stderr, "erresc: unknown sequence ESC %% %c\n", ascii);
 }
 
 void
