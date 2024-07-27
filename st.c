@@ -1552,7 +1552,8 @@ tsetmode(int priv, int set, const int *args, int narg)
 				xsetmode(set, MODE_MOUSESGR);
 				break;
 			case 1034:
-				xsetmode(set, MODE_8BIT);
+				// stop silly mode on alt change
+				//xsetmode(set, MODE_8BIT);
 				break;
 			case 1049: /* swap screen & set/restore cursor as xterm */
 				if (!allowaltscreen)
