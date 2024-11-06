@@ -1204,7 +1204,8 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
 		"⎻", "─", "⎼", "⎽", "├", "┤", "┴", "┬", /* p - w */
 		"│", "≤", "≥", "π", "≠", "£", "·", /* x - ~ */
 	};
-
+    
+    // TODO: CS_GRAPHIC1 for "features"
 	static const char *nerd[63] = { /* 0x40 - 0x7e */
 		// DEL not in set of 63
 		// ESC ( 1 to enter, ESC ( B to exit
@@ -1218,7 +1219,7 @@ tsetchar(Rune u, const Glyph *attr, int x, int y)
 		"│", "≤", "≥", "π", "≠", "£", "·", /* x - ~ */
 	};
 
-	// Also do CS_GRAPHICS1
+	// Also do CS_GRAPHIC1
 	static const char **glyphs = nerd;
 	if(term.trantbl[term.charset] == CS_GRAPHIC0)
 		glyphs = vt100_0;
@@ -2146,8 +2147,9 @@ tputtab(int n)
 void
 tdefutf8(char ascii)
 {
-	if (ascii == 'G')
-		term.mode |= MODE_UTF8;
+    // TODO: redefine @ or maybe others depending on "features"
+	if (ascii == 'G') return;
+	//	term.mode |= MODE_UTF8;
 	// make it always UTF-8 making above line optimize out
 	//else if (ascii == '@')
 	//	term.mode &= ~MODE_UTF8;
